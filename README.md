@@ -1,50 +1,91 @@
-# Welcome to your Expo app 👋
+# 📱 DocAudioApp
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+DocAudioApp is a React Native app built with Expo Router. It allows users to:
+- 🎙️ Record and play audio files with duration and metadata.
+- 📄 Upload and view documents (PDFs, images, videos, etc.) with type icons.
 
-## Get started
+## 🚀 Features
 
-1. Install dependencies
+### 🧭 Navigation
+- **Bottom Tab Navigation** using Expo Router.
+- Two tabs:
+  - `Audio` for recording & playing audio.
+  - `Files` for uploading and viewing documents.
 
-   ```bash
-   npm install
-   ```
+### 🎵 Audio Library
+- Record high-quality audio.
+- Store metadata: name, duration, size.
+- List audios with Play/Stop control and real-time duration.
+- Persistent storage with `AsyncStorage`.
 
-2. Start the app
+### 📄 Files Manager
+- Pick files using `expo-document-picker`.
+- Store files in `AsyncStorage` with unique ID and type.
+- Show icons based on file type (PDF, image, video, etc.).
+- Open files using `IntentLauncher` (Android only for now).
+- Clear uploaded files with a single button.
 
-   ```bash
-   npx expo start
-   ```
+## 🧱 Built With
 
-In the output, you'll find options to open the app in a
+- React Native (with Expo)
+- Expo Router
+- `expo-av`, `expo-document-picker`, `expo-file-system`
+- `@expo/vector-icons` for icons
+- `AsyncStorage` for local data persistence
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🗂️ File Structure
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+app/
+├── _layout.tsx # Tab layout using Expo Router Tabs
+├── audio.tsx # Audio recording and library screen
+└── files.tsx # File picker and viewer screen
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## Learn more
+## 📦 Installation
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+git clone https://github.com/yourusername/DocAudioApp.git
+cd DocAudioApp
+npm install
+npx expo start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 🧪 Test on Expo Go
 
-## Join the community
+Install Expo Go on your phone.
 
-Join our community of developers creating universal apps.
+Run npx expo start in terminal.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Scan the QR code shown.
+
+## 🔐 Permissions
+Ensure these permissions are handled:
+
+Microphone (for audio recording)
+
+File storage (for document access)
+
+## 📌 Notes
+
+Metadata stored via AsyncStorage (no backend).
+
+## ✨ UI Highlights
+Visually organized cards for audio & file items.
+
+Icons based on file types.
+
+Record button for audio.
+
+FAB button to pick files.
+
+Clear button with confirmation alert.
+
+## 👩‍💻 Author
+Name: Pavuluri Mounika
+
+GitHub: @PavuluriMounika
+
+
+
