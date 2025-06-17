@@ -1,29 +1,49 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+//Tabs helps set up bottom tab navigation where each screen is connected to a file like audio.tsx or files.tsx.
+import { Tabs } from "expo-router";  
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+//You’ll use it to show icons (like musical notes or file symbols) in the tab bar.
+import {Ionicons} from '@expo/vector-icons';
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
-
+// layout() -->It sets the layout configuration for your tab navigator.
+export default function Layout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Tabs
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName: keyof typeof Ionicons.glyphMap;
+
+          if (route.name === 'audio') {
+            iconName = 'musical-notes-outline';
+          } else if (route.name === 'files') {
+            iconName = 'document-text-outline';
+          } else {
+            iconName = 'help-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#0A2A66',
+        tabBarInactiveTintColor: 'gray',
+        headerShown: false,
+      })}
+    >
+      <Tabs.Screen
+        name="audio"
+        options={{
+          title: '',
+        }}
+      />
+      <Tabs.Screen
+        name="files"
+        options={{
+          title: '',
+        }}
+      />
+      
+    </Tabs>
   );
 }
+
+
+
+ 
