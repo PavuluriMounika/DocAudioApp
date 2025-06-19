@@ -1,5 +1,4 @@
 // import 'react-native-get-random-values'; 
-
 // import React, { useEffect, useState } from 'react';
 // import {
 //     View,
@@ -7,8 +6,9 @@
 //     FlatList,
 //     TouchableOpacity,
 //     StyleSheet,
-//     Platform, // Keep Platform import
+//     Platform,
 //     Alert,
+//     TextInput,
 // } from 'react-native';
 
 // import * as DocumentPicker from 'expo-document-picker';
@@ -26,24 +26,37 @@
 // }
 
 // export default function FilesScreen() {
+//     // state variables
 //     const [files, setFiles] = useState<StoredFile[]>([]);
-
+//     const [filteredFiles, setFilteredFiles] = useState<StoredFile[]>([]);
+//     const [searchQuery, setSearchQuery] = useState('');
+//     //  Loading Files on App Start
 //     useEffect(() => {
 //         const loadFiles = async () => {
 //             try {
 //                 const saved = await AsyncStorage.getItem('uploaded_files');
 //                 if (saved) {
-//                     setFiles(JSON.parse(saved));
+//                     const parsed = JSON.parse(saved);
+//                     setFiles(parsed);
+//                     setFilteredFiles(parsed);
 //                 }
 //             } catch (e) {
 //                 console.error("Failed to load files from AsyncStorage:", e);
 //                 Alert.alert("Error", "Could not load saved files. They might be corrupted.");
 //                 setFiles([]);
+//                 setFilteredFiles([]);
 //             }
 //         };
 //         loadFiles();
 //     }, []);
-
+//     // Search Logic
+//     useEffect(() => {
+//         const results = files.filter(file =>
+//             file.name.toLowerCase().includes(searchQuery.toLowerCase())
+//         );
+//         setFilteredFiles(results);
+//     }, [searchQuery, files]);
+//     //  Uploading a Document
 //     async function pickDocument() {
 //         const result = await DocumentPicker.getDocumentAsync({ copyToCacheDirectory: true });
 
@@ -53,8 +66,7 @@
 //             const fileMime = file.mimeType || 'application/octet-stream';
 //             let fileUri = file.uri;
 
-//             // FIX: Explicitly check for Android for FileSystem operations
-//             if (Platform.OS === 'android') { 
+//             if (Platform.OS === 'android') {
 //                 const destPath = `${FileSystem.documentDirectory}${fileName}`;
 //                 try {
 //                     const dirInfo = await FileSystem.getInfoAsync(FileSystem.documentDirectory);
@@ -68,13 +80,7 @@
 //                     Alert.alert('Error', 'File copy failed. Please try again.');
 //                     return;
 //                 }
-//             } 
-//             // Optional: Handle other platforms if needed, or leave them to use the cache directory URI directly
-//             // else if (Platform.OS === 'ios') {
-//             //     // On iOS, expo-document-picker typically gives a URI that can be used directly or copied
-//             //     // No specific FileSystem.copyAsync to documentDirectory is usually needed for basic operations.
-//             //     // If persistent storage is desired, copy to FileSystem.documentDirectory here.
-//             // }
+//             }
 
 //             const storedFile: StoredFile = {
 //                 id: uuidv4(),
@@ -88,23 +94,23 @@
 //             const updatedFiles = [...prevFiles, storedFile];
 //             await AsyncStorage.setItem('uploaded_files', JSON.stringify(updatedFiles));
 //             setFiles(updatedFiles);
+//             setSearchQuery(''); // reset search after upload
 //         }
 //     }
+//         //Clear All Uploaded Files
 
 //     async function clearFiles() {
 //         Alert.alert(
 //             'Confirm Clear',
 //             'Are you sure you want to remove all uploaded files?',
 //             [
-//                 {
-//                     text: 'Cancel',
-//                     style: 'cancel',
-//                 },
+//                 { text: 'Cancel', style: 'cancel' },
 //                 {
 //                     text: 'Clear',
 //                     onPress: async () => {
 //                         await AsyncStorage.removeItem('uploaded_files');
 //                         setFiles([]);
+//                         setFilteredFiles([]);
 //                         Alert.alert('Cleared', 'All uploaded files have been removed.');
 //                     },
 //                 },
@@ -112,36 +118,29 @@
 //             { cancelable: true }
 //         );
 //     }
+//     // Open/View a File
 
 //     async function openFile(item: StoredFile) {
 //         if (Platform.OS === 'android') {
 //             try {
-//                 // Ensure FileSystem.getContentUriAsync and IntentLauncher.startActivityAsync are only called on Android
 //                 const contentUri = await FileSystem.getContentUriAsync(item.uri);
 //                 await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
 //                     data: contentUri,
-//                     flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
-//                     type: item.mimeType, // Crucial for Android to open with the right app
+//                     flags: 1,
+//                     type: item.mimeType,
 //                 });
 //             } catch (e: any) {
 //                 console.error("Error opening file on Android:", e);
 //                 Alert.alert("Error", `Cannot open this file on Android: ${e.message || 'Unknown error'}.`);
 //             }
 //         } else if (Platform.OS === 'ios') {
-//             // On iOS, you generally expose the URI to the system or use a specific viewer library
-//             // Expo's Linking module can open some file types with default apps
-//             // Or you'd use something like 'expo-file-viewer' for in-app viewing (e.g., PDFs)
-//             Alert.alert('iOS', 'File viewing is typically handled by system apps or requires a dedicated viewer library for in-app display (e.g., for PDFs).');
-//             // Example for opening with system default:
-//             // try {
-//             //   await Linking.openURL(item.uri);
-//             // } catch (e) {
-//             //   Alert.alert("Error", `Could not open file: ${e.message}`);
-//             // }
-//         } else {
+//             Alert.alert('iOS', 'File viewing is typically handled by system apps or requires a dedicated viewer library.');
+//         }
+//          else {
 //             Alert.alert('Platform Not Supported', 'File viewing is currently supported on Android.');
 //         }
 //     }
+// //Show Icon Based on File Type
 
 //     const getFileIcon = (mimeType: string) => {
 //         if (mimeType.includes('image/')) {
@@ -161,18 +160,36 @@
 //         }
 //         return <Ionicons name="document-outline" size={28} color="#A09ACF" />;
 //     };
+//         //  Return UI Header shows title
 
+//         // TextInput: search box
+
+//             // FlatList: lists filtered files
+
+//             // Two FAB buttons:
+
+//             // ➕ Upload file
+
+//             // Clear all files
 //     return (
 //         <View style={styles.container}>
 //             <Text style={styles.headerSubtitle}>Your Documents</Text>
 //             <Text style={styles.headerTitle}>Documents</Text>
 
-//             {files.length === 0 ? (
-//                 <Text style={styles.noDocumentsText}>No documents uploaded.</Text>
+//             <TextInput
+//                 style={styles.searchInput}
+//                 placeholder="Search files..."
+//                 placeholderTextColor="#888"
+//                 value={searchQuery}
+//                 onChangeText={setSearchQuery}
+//             />
+
+//             {filteredFiles.length === 0 ? (
+//                 <Text style={styles.noDocumentsText}>No matching documents found.</Text>
 //             ) : (
 //                 <FlatList
-//                     data={files}
-//                     keyExtractor={(item) => item.id ? item.id.toString() : uuidv4()}
+//                     data={filteredFiles}
+//                     keyExtractor={(item) => item.id}
 //                     contentContainerStyle={styles.listContentContainer}
 //                     renderItem={({ item }) => (
 //                         <TouchableOpacity style={styles.item} onPress={() => openFile(item)}>
@@ -212,8 +229,16 @@
 //         fontSize: 32,
 //         fontWeight: '600',
 //         color: '#3a3740',
-//         marginBottom: 24,
+//         marginBottom: 12,
 //         textAlign: 'left',
+//     },
+//     searchInput: {
+//         backgroundColor: '#f0f0f0',
+//         borderRadius: 8,
+//         padding: 10,
+//         marginBottom: 12,
+//         fontSize: 16,
+//         color: '#333',
 //     },
 //     noDocumentsText: {
 //         textAlign: 'center',
@@ -274,16 +299,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
 import 'react-native-get-random-values'; 
 import React, { useEffect, useState } from 'react';
 import {
@@ -304,16 +319,12 @@ import * as IntentLauncher from 'expo-intent-launcher';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { v4 as uuidv4 } from 'uuid';
 
-interface StoredFile {
-    id: string;
-    name: string;
-    uri: string;
-    mimeType: string;
-}
+// Removed TypeScript interface for compatibility
+// StoredFile = { id: string, name: string, uri: string, mimeType: string }
 
 export default function FilesScreen() {
-    const [files, setFiles] = useState<StoredFile[]>([]);
-    const [filteredFiles, setFilteredFiles] = useState<StoredFile[]>([]);
+    const [files, setFiles] = useState([]);
+    const [filteredFiles, setFilteredFiles] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
@@ -367,7 +378,7 @@ export default function FilesScreen() {
                 }
             }
 
-            const storedFile: StoredFile = {
+            const storedFile = {
                 id: uuidv4(),
                 name: fileName,
                 uri: fileUri,
@@ -379,7 +390,7 @@ export default function FilesScreen() {
             const updatedFiles = [...prevFiles, storedFile];
             await AsyncStorage.setItem('uploaded_files', JSON.stringify(updatedFiles));
             setFiles(updatedFiles);
-            setSearchQuery(''); // reset search after upload
+            setSearchQuery('');
         }
     }
 
@@ -403,7 +414,7 @@ export default function FilesScreen() {
         );
     }
 
-    async function openFile(item: StoredFile) {
+    async function openFile(item) {
         if (Platform.OS === 'android') {
             try {
                 const contentUri = await FileSystem.getContentUriAsync(item.uri);
@@ -412,7 +423,7 @@ export default function FilesScreen() {
                     flags: 1,
                     type: item.mimeType,
                 });
-            } catch (e: any) {
+            } catch (e) {
                 console.error("Error opening file on Android:", e);
                 Alert.alert("Error", `Cannot open this file on Android: ${e.message || 'Unknown error'}.`);
             }
@@ -423,7 +434,7 @@ export default function FilesScreen() {
         }
     }
 
-    const getFileIcon = (mimeType: string) => {
+    const getFileIcon = (mimeType) => {
         if (mimeType.includes('image/')) {
             return <Ionicons name="image-outline" size={28} color="#A09ACF" />;
         }
